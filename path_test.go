@@ -20,8 +20,8 @@ func newTest() {
 	}
 	pathTest.Username = env["PATH_USERNAME"]
 	pathTest.Password = env["PATH_PASSWORD"]
-	log.Println(pathTest.Username)
-	log.Println(pathTest.Password)
+
+	pathTest.New()
 }
 
 func TestNewTokenRequestWithInvalidLogin(t *testing.T) {

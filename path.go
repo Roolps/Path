@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -41,7 +40,8 @@ func (c *APIClient) newToken() error {
 		"username": []string{c.Username},
 		"password": []string{c.Password},
 	}
-	_, err := c.requestHandler("/token", http.MethodPost, map[string]string{"Content-Type": "application/x-www-form-urlencoded"}, []byte(query.Encode()))
+	raw, err := c.requestHandler("/token", http.MethodPost, map[string]string{"Content-Type": "application/x-www-form-urlencoded"}, []byte(query.Encode()))
+	json.Unmarshal(raw, &c.token)
 	return err
 }
 
@@ -74,7 +74,6 @@ func (c *APIClient) requestHandler(endpoint string, method string, headers map[s
 	if err != nil {
 		return nil, err
 	}
-	log.Println(string(raw))
 	if res.StatusCode >= 400 && res.StatusCode <= 599 {
 		type detail struct {
 			Detail json.RawMessage `json:"detail"`
