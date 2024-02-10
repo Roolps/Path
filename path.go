@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -75,6 +76,9 @@ func (c *APIClient) requestHandler(endpoint string, method string, headers map[s
 		return nil, err
 	}
 	if res.StatusCode >= 400 && res.StatusCode <= 599 {
+		if res.StatusCode == 500 {
+			return nil, fmt.Errorf("ERROR 500: %v", string(raw))
+		}
 		type detail struct {
 			Detail json.RawMessage `json:"detail"`
 		}
@@ -91,7 +95,7 @@ func (c *APIClient) requestHandler(endpoint string, method string, headers map[s
 }
 
 // extract first of error array
-func extractError(raw []byte) string {
+func extractError(raw []byte) error {
 	type detail struct {
 		Loc  []string `json:"loc"`
 		Msg  string   `json:"msg"`
@@ -99,5 +103,9 @@ func extractError(raw []byte) string {
 	}
 	d := []detail{}
 	json.Unmarshal(raw, &d)
-	return fmt.Sprintf("%v: %v", d[0].Msg, strings.Join(d[0].Loc, ": "))
+	if pathErrors[d[0].Type] != nil {
+		return fmt.Errorf("%v %v", pathErrors[d[0].Type], strings.Join(d[0].Loc, ":"))
+	}
+	log.Println(d[0].Type)
+	return fmt.Errorf("%v %v", d[0].Msg, strings.Join(d[0].Loc, ":"))
 }

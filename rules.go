@@ -48,7 +48,7 @@ func (c *APIClient) GetRules() (map[string]*Rule, error) {
 		return nil, err
 	}
 	type response struct {
-		Rules []*Rule
+		Rules []*Rule `json:"rules"`
 	}
 	data := &response{}
 	json.Unmarshal(raw, &data)
