@@ -31,3 +31,11 @@ func TestCreateRuleFunction(t *testing.T) {
 		log.Println(rule)
 	}
 }
+
+func TestDeleteRuleFunction(t *testing.T) {
+	newTest()
+	err := pathTest.DeleteRule("")
+	if err != nil {
+		t.Error(err)
+	}
+}

@@ -2,6 +2,7 @@ package path
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -73,4 +74,12 @@ func (c *APIClient) CreateRule(rule *CreateRule) (*Rule, error) {
 	r := &Rule{}
 	json.Unmarshal(raw, &r)
 	return r, nil
+}
+
+func (c *APIClient) DeleteRule(id string) error {
+	_, err := c.requestHandler(fmt.Sprintf("/rules/%v", id), http.MethodDelete, nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
 }

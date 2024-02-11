@@ -75,6 +75,7 @@ func (c *APIClient) requestHandler(endpoint string, method string, headers map[s
 	if err != nil {
 		return nil, err
 	}
+	log.Println(string(raw))
 	if res.StatusCode >= 400 && res.StatusCode <= 599 {
 		if res.StatusCode == 500 {
 			return nil, fmt.Errorf("ERROR 500: %v", string(raw))
